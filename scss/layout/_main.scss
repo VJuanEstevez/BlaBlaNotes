@@ -1,0 +1,45 @@
+@use '../utils/variables' as v;
+
+.app {
+  @media (min-width: 960px) {
+    flex-direction: row;
+    flex-wrap: wrap;
+
+    .app-header {
+      width: 100%;
+    }
+
+    .sidebar {
+      order: 1;
+    }
+
+    .main {
+      order: 2;
+      flex: 1;
+      min-width: 0;
+    }
+  }
+}
+
+.main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: v.$space-5 v.$space-4 v.$space-6;
+  gap: v.$space-6;
+  width: 100%;
+  background: var(--list-tint, transparent);
+  transition: background v.$transition-slow;
+
+  @media (min-width: 960px) {
+    padding-left: v.$space-6;
+    padding-right: v.$space-6;
+  }
+}
+
+.main > * {
+  max-width: 780px;
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+}

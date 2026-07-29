@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BlaBlaNotes — Notas y listas por voz</title>
+  <meta name="description" content="Captura ideas, listas de películas, música o compra hablando. BlaBlaNotes escucha, clasifica y guarda por ti." />
+  <meta name="theme-color" content="#6C5CE7" />
+  <link rel="stylesheet" href="css/main.css" />
+  <link rel="manifest" href="manifest.json">
+</head>
+<body>
+  <a class="skip-link" href="#main-content">Saltar al contenido principal</a>
+
+  <!-- ===================== SPLASH SCREEN ===================== -->
+  <div class="splash-screen" id="splash-screen">
+    <div class="splash-content">
+      <div class="splash-logo">🎙️</div>
+      <h1 class="splash-title">BlaBlaNotes</h1>
+      <p class="splash-subtitle">Notas y listas por voz</p>
+      <div class="splash-loader"></div>
+    </div>
+  </div>
+
+  <div class="app" id="app">
+
+    <!-- ===================== HEADER ===================== -->
+    <header class="app-header">
+      <button
+        class="app-header__toggle"
+        id="sidebar-toggle"
+        type="button"
+        aria-label="Abrir menú de listas"
+        aria-expanded="false"
+        aria-controls="sidebar"
+      >
+        <span class="app-header__toggle-bar"></span>
+        <span class="app-header__toggle-bar"></span>
+        <span class="app-header__toggle-bar"></span>
+      </button>
+
+      <div class="app-header__brand">
+        <span class="app-header__title">BlaBla<strong>Notes</strong></span>
+      </div>
+    </header>
+
+    <div class="overlay" id="overlay" hidden></div>
+
+    <!-- ===================== SIDEBAR ===================== -->
+    <aside class="sidebar" id="sidebar" aria-label="Listas guardadas">
+      <div class="sidebar__header">
+        <button class="sidebar__close" id="sidebar-close" type="button" aria-label="Cerrar menú">✕</button>
+      </div>
+
+      <button class="sidebar__create-btn" id="create-list-btn" type="button">
+        <span aria-hidden="true">＋</span> Nueva lista
+      </button>
+
+      <nav aria-label="Navegación de listas">
+        <ul class="sidebar__list" id="sidebar-list"></ul>
+      </nav>
+
+      <p class="sidebar__empty" id="sidebar-empty" hidden>Aún no tienes listas. Crea una o dicta "crear lista de compra".</p>
+
+      <div class="sidebar__footer">
+        <button
+          class="sidebar__footer-btn"
+          id="dark-mode-toggle"
+          type="button"
+          aria-pressed="false"
+        >
+          <span class="sidebar__footer-icon" aria-hidden="true">🌙</span>
+          <span data-role="dark-mode-label">Modo oscuro</span>
+        </button>
+
+        <button
+          class="sidebar__footer-btn"
+          id="settings-toggle"
+          type="button"
+          aria-haspopup="dialog"
+          aria-controls="settings-modal"
+        >
+          <svg class="sidebar__footer-icon sidebar__footer-icon--svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="M19.14 12.94a7.14 7.14 0 0 0 .06-.94 7.14 7.14 0 0 0-.06-.94l2.03-1.58a.5.5 0 0 0 .12-.64l-1.92-3.32a.5.5 0 0 0-.6-.22l-2.39.96a7.3 7.3 0 0 0-1.63-.94l-.36-2.54a.5.5 0 0 0-.5-.42h-3.84a.5.5 0 0 0-.5.42l-.36 2.54c-.59.24-1.14.56-1.63.94l-2.39-.96a.5.5 0 0 0-.6.22L2.71 8.84a.5.5 0 0 0 .12.64l2.03 1.58c-.04.31-.06.62-.06.94s.02.63.06.94l-2.03 1.58a.5.5 0 0 0-.12.64l1.92 3.32c.13.22.39.31.6.22l2.39-.96c.49.38 1.04.7 1.63.94l.36 2.54c.05.24.26.42.5.42h3.84c.24 0 .45-.18.5-.42l.36-2.54c.59-.24 1.14-.56 1.63-.94l2.39.96c.22.09.47 0 .6-.22l1.92-3.32a.5.5 0 0 0-.12-.64l-2.03-1.58ZM12 15.5A3.5 3.5 0 1 1 12 8.5a3.5 3.5 0 0 1 0 7Z"/>
+          </svg>
+          <span>Ajustes</span>
+        </button>
+      </div>
+    </aside>
+
+    <!-- ===================== MAIN ===================== -->
+    <main class="main" id="main-content">
+      <section class="list-panel" id="list-panel" aria-live="polite">
+        <p class="list-panel__placeholder" id="list-panel-placeholder">
+          Selecciona o crea una lista, o simplemente pulsa el micrófono y empieza a hablar.
+        </p>
+        <div id="list-panel-content"></div>
+      </section>
+
+      <!-- ===================== VOICE CONTROL ===================== -->
+      <section class="voice-control" aria-label="Control de voz">
+        <p class="voice-control__transcript" id="voice-transcript" aria-live="polite"></p>
+
+        <button
+          class="voice-control__button"
+          id="voice-button"
+          type="button"
+          aria-pressed="false"
+          aria-label="Activar dictado por voz"
+        >
+          <span class="voice-control__pulse" aria-hidden="true"></span>
+          <span class="voice-control__pulse voice-control__pulse--delay" aria-hidden="true"></span>
+          <svg class="voice-control__icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="M12 15a3 3 0 0 0 3-3V6a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3Z"/>
+            <path d="M19 11a1 1 0 0 0-2 0 5 5 0 0 1-10 0 1 1 0 0 0-2 0 7 7 0 0 0 6 6.92V20H9a1 1 0 0 0 0 2h6a1 1 0 0 0 0-2h-2v-2.08A7 7 0 0 0 19 11Z"/>
+          </svg>
+        </button>
+
+        <p class="voice-control__status" id="voice-status" role="status" aria-live="assertive">
+          Pulsa para hablar
+        </p>
+      </section>
+    </main>
+  </div>
+
+  <!-- ===================== MODAL: CREATE / EDIT LIST ===================== -->
+  <dialog class="modal" id="list-modal" aria-labelledby="list-modal-title">
+    <form class="modal__dialog" id="list-modal-form" method="dialog">
+      <div class="modal__header">
+        <h2 class="modal__title" id="list-modal-title">Nueva lista</h2>
+        <button class="modal__close" type="button" id="list-modal-close" aria-label="Cerrar">✕</button>
+      </div>
+      <div class="modal__body">
+        <div class="modal__field">
+          <label class="modal__label" for="list-name-input">Nombre de la lista</label>
+          <input class="modal__input" id="list-name-input" name="name" type="text" placeholder="Ej. Películas, Compra, Música…" required maxlength="40" autocomplete="off" />
+        </div>
+        <div class="modal__field">
+          <span class="modal__label" id="list-color-label">Color</span>
+          <div class="modal__colors" id="list-color-options" role="radiogroup" aria-labelledby="list-color-label"></div>
+        </div>
+      </div>
+      <div class="modal__footer">
+        <button class="modal__btn modal__btn--secondary" type="button" id="list-modal-cancel">Cancelar</button>
+        <button class="modal__btn modal__btn--primary" type="submit" id="list-modal-submit">Crear lista</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- ===================== MODAL: SETTINGS ===================== -->
+  <dialog class="modal" id="settings-modal" aria-labelledby="settings-modal-title">
+    <div class="modal__dialog">
+      <div class="modal__header">
+        <h2 class="modal__title" id="settings-modal-title">Ajustes</h2>
+        <button class="modal__close" type="button" id="settings-modal-close" aria-label="Cerrar">✕</button>
+      </div>
+      <div class="modal__body">
+        <div class="settings__group">
+          <label class="settings__label" for="settings-lang">Idioma de reconocimiento</label>
+          <select class="settings__select" id="settings-lang">
+            <option value="es-ES">Español</option>
+            <option value="en-US">English</option>
+            <option value="fr-FR">Français</option>
+          </select>
+        </div>
+
+        <div class="settings__group">
+          <label class="settings__label" for="settings-silence">
+            Segundos de silencio para guardar
+            <span class="settings__range-value" id="settings-silence-value">3.0s</span>
+          </label>
+          <input class="settings__range" id="settings-silence" type="range" min="1" max="6" step="0.5" value="3" />
+        </div>
+
+        <div class="settings__group">
+          <span class="settings__label">Gestión de datos</span>
+          <div class="settings__data-actions">
+            <button class="settings__btn" id="settings-export-json" type="button">Exportar (.json)</button>
+            <button class="settings__btn" id="settings-export-txt" type="button">Exportar (.txt)</button>
+            <button class="settings__btn" id="settings-import" type="button">Importar datos</button>
+            <input type="file" id="settings-import-input" accept="application/json" hidden />
+            <button class="settings__btn settings__btn--danger" id="settings-clear" type="button">Borrar todo</button>
+          </div>
+        </div>
+      </div>
+      <div class="modal__footer">
+        <button class="modal__btn modal__btn--primary" type="button" id="settings-done">Hecho</button>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- ===================== TOAST ===================== -->
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>

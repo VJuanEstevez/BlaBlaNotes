@@ -1,0 +1,5 @@
+# Dependencias
+node_modules/
+
+# Configuración local de Claude / editores
+.claude/

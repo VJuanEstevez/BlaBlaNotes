@@ -1,0 +1,17 @@
+@use '../utils/variables' as v;
+
+:root {
+  --color-bg: #{v.$color-bg};
+  --color-surface: #{v.$color-surface};
+  --color-text: #{v.$color-text};
+  --color-text-muted: #{v.$color-text-muted};
+  --color-border: #{v.$color-border};
+}
+
+html[data-theme='dark'] {
+  --color-bg: #14121f;
+  --color-surface: #201c30;
+  --color-text: #f2f1f9;
+  --color-text-muted: #a9a5c4;
+  --color-border: #322d47;
+}

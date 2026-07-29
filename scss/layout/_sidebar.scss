@@ -1,0 +1,228 @@
+@use '../utils/variables' as v;
+@use '../utils/mixins' as m;
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 12, 26, 0.5);
+  z-index: v.$z-overlay;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity v.$transition-base;
+
+  &--visible {
+    opacity: 1;
+    pointer-events: auto;
+  }
+}
+
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: v.$sidebar-width;
+  max-width: 85vw;
+  background: v.$color-sidebar-bg;
+  color: v.$color-text-inverse;
+  z-index: v.$z-sidebar;
+  display: flex;
+  flex-direction: column;
+  padding: v.$space-5 v.$space-4;
+  transform: translateX(-100%);
+  transition: transform v.$transition-base;
+  box-shadow: v.$shadow-lg;
+
+  &--open {
+    transform: translateX(0);
+  }
+
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    margin-bottom: v.$space-2;
+  }
+
+  &__close {
+    @include m.button-reset;
+    @include m.focus-ring;
+    color: v.$color-text-inverse-muted;
+    width: 32px;
+    height: 32px;
+    border-radius: v.$radius-sm;
+
+    &:hover {
+      background: v.$color-sidebar-bg-hover;
+      color: v.$color-text-inverse;
+    }
+  }
+
+  &__create-btn {
+    @include m.button-reset;
+    @include m.focus-ring;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: v.$space-2;
+    width: 100%;
+    padding: v.$space-3;
+    margin-bottom: v.$space-4;
+    border-radius: v.$radius-md;
+    background: v.$color-primary;
+    color: #fff;
+    font-weight: 600;
+    transition: background v.$transition-fast, transform v.$transition-fast;
+
+    &:hover {
+      background: v.$color-primary-dark;
+    }
+
+    &:active {
+      transform: scale(0.98);
+    }
+  }
+
+  &__list {
+    display: flex;
+    flex-direction: column;
+    gap: v.$space-1;
+    overflow-y: auto;
+    @include m.custom-scrollbar;
+  }
+
+  &__item {
+    display: flex;
+    align-items: center;
+    gap: v.$space-3;
+    border-radius: v.$radius-md;
+    transition: background v.$transition-fast;
+
+    &:hover {
+      background: v.$color-sidebar-bg-hover;
+    }
+
+    &--active {
+      background: v.$color-sidebar-bg-hover;
+
+      .sidebar__item-btn {
+        font-weight: 600;
+      }
+    }
+  }
+
+  &__item-btn {
+    @include m.button-reset;
+    @include m.focus-ring;
+    display: flex;
+    align-items: center;
+    gap: v.$space-3;
+    flex: 1;
+    min-width: 0;
+    padding: v.$space-3 v.$space-2;
+    text-align: left;
+  }
+
+  &__color-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: v.$radius-full;
+    flex-shrink: 0;
+  }
+
+  &__item-name {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__item-count {
+    font-size: v.$font-size-sm;
+    color: v.$color-text-inverse-muted;
+    flex-shrink: 0;
+  }
+
+  &__item-delete {
+    @include m.button-reset;
+    @include m.focus-ring;
+    flex-shrink: 0;
+    width: 32px;
+    height: 32px;
+    margin-right: v.$space-1;
+    border-radius: v.$radius-sm;
+    color: v.$color-text-inverse-muted;
+    opacity: 0;
+    transition: opacity v.$transition-fast, color v.$transition-fast, background v.$transition-fast;
+
+    &:hover {
+      color: v.$color-error;
+      background: v.$color-sidebar-bg-hover;
+    }
+  }
+
+  &__item:hover &__item-delete,
+  &__item-delete:focus-visible {
+    opacity: 1;
+  }
+
+  &__empty {
+    color: v.$color-text-inverse-muted;
+    font-size: v.$font-size-sm;
+    padding: v.$space-3 v.$space-2;
+  }
+
+  &__footer {
+    display: flex;
+    flex-direction: column;
+    gap: v.$space-1;
+    margin-top: auto;
+    padding-top: v.$space-4;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  &__footer-btn {
+    @include m.button-reset;
+    @include m.focus-ring;
+    display: flex;
+    align-items: center;
+    gap: v.$space-3;
+    width: 100%;
+    padding: v.$space-3 v.$space-2;
+    border-radius: v.$radius-md;
+    color: v.$color-text-inverse-muted;
+    transition: background v.$transition-fast, color v.$transition-fast;
+
+    &:hover {
+      background: v.$color-sidebar-bg-hover;
+      color: v.$color-text-inverse;
+    }
+  }
+
+  &__footer-icon {
+    font-size: 1.1rem;
+    width: 22px;
+    text-align: center;
+    flex-shrink: 0;
+
+    &--svg {
+      width: 20px;
+      height: 20px;
+      fill: currentColor;
+    }
+  }
+
+  @media (min-width: 960px) {
+    position: sticky;
+    top: v.$header-height;
+    height: calc(100dvh - #{v.$header-height});
+    transform: none;
+    box-shadow: none;
+    border-right: 1px solid rgba(255, 255, 255, 0.06);
+
+    &__close {
+      display: none;
+    }
+  }
+}

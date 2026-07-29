@@ -1,0 +1,32 @@
+@use '../utils/variables' as v;
+
+body {
+  font-family: v.$font-family-base;
+  font-size: v.$font-size-base;
+  color: var(--color-text);
+  background: var(--color-bg);
+  line-height: 1.5;
+  transition: background v.$transition-base, color v.$transition-base;
+}
+
+.skip-link {
+  position: absolute;
+  top: -100%;
+  left: v.$space-4;
+  background: v.$color-primary;
+  color: #fff;
+  padding: v.$space-2 v.$space-4;
+  border-radius: v.$radius-sm;
+  z-index: 999;
+  transition: top v.$transition-fast;
+
+  &:focus {
+    top: v.$space-2;
+  }
+}
+
+.app {
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+}

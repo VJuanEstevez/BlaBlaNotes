@@ -1,0 +1,197 @@
+@use '../utils/variables' as v;
+@use '../utils/mixins' as m;
+
+.list-panel {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: v.$space-4;
+}
+
+.list-panel__placeholder {
+  margin: auto;
+  text-align: center;
+  color: var(--color-text-muted);
+  max-width: 32ch;
+}
+
+.list-panel__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: v.$space-4;
+  margin-bottom: v.$space-6;
+  padding-bottom: v.$space-5;
+  border-bottom: 2px solid var(--color-border);
+}
+
+.list-panel__title-group {
+  flex: 1;
+  min-width: 0;
+}
+
+.list-panel__actions {
+  display: flex;
+  gap: v.$space-2;
+  flex-shrink: 0;
+}
+
+.list-panel__title {
+  font-size: v.$font-size-md;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.list-panel__count {
+  font-size: v.$font-size-sm;
+  color: var(--color-text-muted);
+  margin-top: v.$space-1;
+}
+
+.list-panel__share-btn {
+  @include m.button-reset;
+  @include m.focus-ring;
+  padding: v.$space-2;
+  color: var(--color-text-muted);
+  border-radius: v.$radius-sm;
+  transition: all v.$transition-fast;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &:hover {
+    background: var(--color-border);
+    color: v.$color-primary;
+  }
+
+  svg {
+    width: 20px;
+    height: 20px;
+  }
+}
+
+.list-panel__items {
+  display: flex;
+  flex-direction: column;
+  gap: v.$space-2;
+}
+
+.list-panel__empty {
+  text-align: center;
+  color: var(--color-text-muted);
+  padding: v.$space-6 v.$space-4;
+  border: 2px dashed var(--color-border);
+  border-radius: v.$radius-md;
+}
+
+// ------------------------------------------------------------------
+// Individual list item
+// ------------------------------------------------------------------
+
+.list-item {
+  display: flex;
+  align-items: center;
+  gap: v.$space-3;
+  padding: v.$space-3;
+  background: var(--color-surface);
+  border-radius: v.$radius-md;
+  box-shadow: v.$shadow-sm;
+  animation: slide-up v.$transition-base;
+  transition: all v.$transition-fast;
+  cursor: grab;
+  user-select: none;
+
+  &:active {
+    cursor: grabbing;
+  }
+
+  &.dragging {
+    opacity: 0.5;
+    background: var(--color-border);
+  }
+
+  &.drag-over {
+    background: rgba(108, 92, 231, 0.1);
+    border-top: 2px solid v.$color-primary;
+  }
+
+  &--completed {
+    .list-item__text {
+      text-decoration: line-through;
+      color: var(--color-text-muted);
+    }
+  }
+}
+
+.list-item__drag-handle {
+  color: var(--color-text-muted);
+  font-size: 0.75rem;
+  flex-shrink: 0;
+  opacity: 0;
+  transition: opacity v.$transition-fast;
+  cursor: grab;
+  letter-spacing: -0.1em;
+
+  .list-item:hover & {
+    opacity: 1;
+  }
+}
+
+.list-item__checkbox {
+  width: 22px;
+  height: 22px;
+  flex-shrink: 0;
+  accent-color: var(--list-color, #{v.$color-primary});
+  cursor: pointer;
+}
+
+.list-item__text {
+  flex: 1;
+  min-width: 0;
+  word-break: break-word;
+}
+
+.list-item__input {
+  flex: 1;
+  min-width: 0;
+  border: 1px solid v.$color-primary;
+  border-radius: v.$radius-sm;
+  padding: v.$space-1 v.$space-2;
+  font: inherit;
+  background: var(--color-surface);
+  color: var(--color-text);
+}
+
+.list-item__actions {
+  display: flex;
+  gap: v.$space-1;
+  flex-shrink: 0;
+}
+
+.list-item__btn {
+  @include m.button-reset;
+  @include m.focus-ring;
+  width: 32px;
+  height: 32px;
+  border-radius: v.$radius-sm;
+  color: var(--color-text-muted);
+  @include m.flex-center;
+  transition: background v.$transition-fast, color v.$transition-fast;
+
+  &:hover {
+    background: var(--color-bg);
+  }
+
+  &--edit:hover {
+    color: v.$color-primary;
+  }
+
+  &--delete:hover {
+    color: v.$color-error;
+  }
+
+  &--save {
+    color: v.$color-success;
+  }
+}
