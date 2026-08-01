@@ -1,18 +1,23 @@
 @use '../utils/variables' as v;
 @use '../utils/mixins' as m;
 
+// Anything painted directly on the dashboard reads its colour from the
+// contrast-aware tokens, falling back to the global theme when no folder
+// colour is applied.
 .list-panel {
   flex: 1;
   display: flex;
   flex-direction: column;
   gap: v.$space-4;
+  color: inherit;
 }
 
 .list-panel__placeholder {
   margin: auto;
   text-align: center;
-  color: var(--color-text-muted);
+  color: var(--text-dashboard-muted, var(--color-text-muted));
   max-width: 32ch;
+  transition: color v.$transition-slow;
 }
 
 .list-panel__header {
@@ -20,9 +25,10 @@
   align-items: center;
   justify-content: space-between;
   gap: v.$space-4;
-  margin-bottom: v.$space-6;
+  margin-bottom: v.$space-4;
   padding-bottom: v.$space-5;
-  border-bottom: 2px solid var(--color-border);
+  border-bottom: 2px solid var(--border-dashboard, var(--color-border));
+  transition: border-color v.$transition-slow;
 }
 
 .list-panel__title-group {
@@ -32,6 +38,7 @@
 
 .list-panel__actions {
   display: flex;
+  align-items: center;
   gap: v.$space-2;
   flex-shrink: 0;
 }
@@ -41,33 +48,89 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  color: inherit;
 }
 
-.list-panel__count {
-  font-size: v.$font-size-sm;
-  color: var(--color-text-muted);
-  margin-top: v.$space-1;
-}
-
-.list-panel__share-btn {
-  @include m.button-reset;
-  @include m.focus-ring;
-  padding: v.$space-2;
-  color: var(--color-text-muted);
-  border-radius: v.$radius-sm;
-  transition: all v.$transition-fast;
+.list-panel__meta {
   display: flex;
   align-items: center;
-  justify-content: center;
+  flex-wrap: wrap;
+  gap: v.$space-1 v.$space-3;
+  margin-top: v.$space-1;
+  font-size: v.$font-size-sm;
+  color: var(--text-dashboard-muted, var(--color-text-muted));
+  transition: color v.$transition-slow;
+}
+
+.list-panel__total {
+  font-weight: 700;
+  color: inherit;
+}
+
+.list-panel__icon-btn {
+  @include m.button-reset;
+  @include m.focus-ring;
+  @include m.flex-center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  color: inherit;
+  border-radius: v.$radius-sm;
+  transition: background v.$transition-fast, transform v.$transition-fast;
 
   &:hover {
-    background: var(--color-border);
-    color: v.$color-primary;
+    background: var(--surface-dashboard, var(--color-border));
+  }
+
+  &:active {
+    transform: scale(0.94);
   }
 
   svg {
     width: 20px;
     height: 20px;
+  }
+}
+
+.list-panel__current-color {
+  width: 20px;
+  height: 20px;
+  border-radius: v.$radius-full;
+  border: 2px solid var(--border-dashboard, var(--color-border));
+}
+
+// ------------------------------------------------------------------
+// Folder colour picker
+// ------------------------------------------------------------------
+
+.list-panel__palette {
+  display: flex;
+  flex-wrap: wrap;
+  gap: v.$space-2;
+  padding: v.$space-3;
+  margin-bottom: v.$space-4;
+  border-radius: v.$radius-md;
+  background: var(--surface-dashboard, var(--color-surface));
+  border: 1px solid var(--border-dashboard, var(--color-border));
+  animation: slide-up v.$transition-base;
+}
+
+.list-panel__swatch {
+  @include m.button-reset;
+  @include m.focus-ring;
+  width: 30px;
+  height: 30px;
+  border-radius: v.$radius-full;
+  border: 3px solid transparent;
+  transition: transform v.$transition-fast, border-color v.$transition-fast;
+
+  &:hover {
+    transform: scale(1.12);
+  }
+
+  &--selected {
+    border-color: var(--text-dashboard, var(--color-text));
+    transform: scale(1.12);
   }
 }
 
@@ -79,10 +142,11 @@
 
 .list-panel__empty {
   text-align: center;
-  color: var(--color-text-muted);
+  color: var(--text-dashboard-muted, var(--color-text-muted));
   padding: v.$space-6 v.$space-4;
-  border: 2px dashed var(--color-border);
+  border: 2px dashed var(--border-dashboard, var(--color-border));
   border-radius: v.$radius-md;
+  transition: color v.$transition-slow, border-color v.$transition-slow;
 }
 
 // ------------------------------------------------------------------
@@ -94,7 +158,10 @@
   align-items: center;
   gap: v.$space-3;
   padding: v.$space-3;
+  // Cards sit on their own surface, so they keep the global text colour
+  // instead of inheriting the dashboard's.
   background: var(--color-surface);
+  color: var(--color-text);
   border-radius: v.$radius-md;
   box-shadow: v.$shadow-sm;
   animation: slide-up v.$transition-base;
@@ -136,13 +203,17 @@
   .list-item:hover & {
     opacity: 1;
   }
+
+  @media (hover: none) {
+    opacity: 0.6;
+  }
 }
 
 .list-item__checkbox {
   width: 22px;
   height: 22px;
   flex-shrink: 0;
-  accent-color: var(--list-color, #{v.$color-primary});
+  accent-color: var(--list-tint, #{v.$color-primary});
   cursor: pointer;
 }
 
@@ -150,6 +221,37 @@
   flex: 1;
   min-width: 0;
   word-break: break-word;
+}
+
+// Quantity ("×3 botellas") and price chips extracted from the dictation.
+.list-item__meta {
+  display: flex;
+  align-items: center;
+  gap: v.$space-1;
+  flex-shrink: 0;
+}
+
+.list-item__badge,
+.list-item__price {
+  font-size: v.$font-size-sm;
+  font-weight: 700;
+  padding: 2px v.$space-2;
+  border-radius: v.$radius-full;
+  white-space: nowrap;
+}
+
+.list-item__badge {
+  background: rgba(v.$color-primary, 0.12);
+  color: v.$color-primary;
+}
+
+.list-item__price {
+  background: rgba(v.$color-success, 0.14);
+  color: #0f7a52;
+}
+
+html[data-theme='dark'] .list-item__price {
+  color: v.$color-success;
 }
 
 .list-item__input {

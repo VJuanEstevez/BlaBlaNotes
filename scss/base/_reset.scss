@@ -14,6 +14,12 @@ html {
   text-size-adjust: 100%;
 }
 
+// The `hidden` attribute must win over any component `display` declaration,
+// otherwise flex/grid containers stay visible when toggled off from JS.
+[hidden] {
+  display: none !important;
+}
+
 html,
 body {
   height: 100%;

@@ -16,8 +16,9 @@
   min-height: 1.4em;
   max-width: 90vw;
   text-align: center;
-  color: var(--color-text-muted);
+  color: var(--text-dashboard-muted, var(--color-text-muted));
   font-style: italic;
+  transition: color v.$transition-slow;
   @include m.line-clamp(2);
 }
 
@@ -86,8 +87,34 @@
 
 .voice-control__status {
   font-size: v.$font-size-sm;
-  color: var(--color-text-muted);
+  color: var(--text-dashboard-muted, var(--color-text-muted));
   font-weight: 600;
   letter-spacing: 0.02em;
   text-transform: uppercase;
+  transition: color v.$transition-slow;
+}
+
+// Tells the user which hands-free triggers are currently armed.
+.voice-control__hint {
+  display: flex;
+  align-items: center;
+  gap: v.$space-2;
+  font-size: v.$font-size-sm;
+  color: var(--text-dashboard-muted, var(--color-text-muted));
+  padding: v.$space-1 v.$space-3;
+  border-radius: v.$radius-full;
+  border: 1px solid var(--border-dashboard, var(--color-border));
+  background: var(--surface-dashboard, transparent);
+  text-align: center;
+  transition: color v.$transition-slow, border-color v.$transition-slow;
+
+  &::before {
+    content: '';
+    width: 8px;
+    height: 8px;
+    border-radius: v.$radius-full;
+    background: v.$color-success;
+    flex-shrink: 0;
+    animation: pulse-dot 2s ease-in-out infinite;
+  }
 }

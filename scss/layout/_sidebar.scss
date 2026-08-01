@@ -147,6 +147,7 @@
   &__item-delete {
     @include m.button-reset;
     @include m.focus-ring;
+    @include m.flex-center;
     flex-shrink: 0;
     width: 32px;
     height: 32px;
@@ -163,8 +164,16 @@
   }
 
   &__item:hover &__item-delete,
+  &__item--active &__item-delete,
   &__item-delete:focus-visible {
     opacity: 1;
+  }
+
+  // Touch devices have no hover, so the control has to stay reachable.
+  @media (hover: none) {
+    &__item-delete {
+      opacity: 0.75;
+    }
   }
 
   &__empty {

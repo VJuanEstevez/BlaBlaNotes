@@ -1,0 +1,18 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><title>seed</title></head><body>
+<script>
+localStorage.setItem('blablanotes:lists', JSON.stringify([
+  {id:'l1', name:'Compra', color:'#ffb020', createdAt:1, items:[
+    {id:'i1', text:'Leche', completed:false, createdAt:1, quantity:3, unit:'botellas', price:1.2, currency:'EUR'},
+    {id:'i2', text:'Pan integral', completed:false, createdAt:2, price:2.4, currency:'EUR'},
+    {id:'i3', text:'Tomates', completed:false, createdAt:3, quantity:2, unit:'kilos'},
+    {id:'i4', text:'Café', completed:true, createdAt:4}
+  ]},
+  {id:'l2', name:'Películas', color:'#6c5ce7', createdAt:2, items:[
+    {id:'i5', text:'Dune parte dos', completed:false, createdAt:5}
+  ]},
+  {id:'l3', name:'Ideas', color:'#3ec4e0', createdAt:3, items:[]}
+]));
+localStorage.setItem('blablanotes:activeListId', JSON.stringify('l1'));
+document.title = 'seeded';
+</script>
+<p>seeded</p></body></html>

@@ -21,6 +21,10 @@
   }
 }
 
+// `--bg-dashboard` and `--text-dashboard` are written by `ui/dashboardTheme.js`
+// when a folder colour is applied. The text colour is derived from the
+// background's perceived luminance, so every tint stays readable; the fallbacks
+// keep the panel neutral while no list is selected.
 .main {
   flex: 1;
   display: flex;
@@ -28,8 +32,13 @@
   padding: v.$space-5 v.$space-4 v.$space-6;
   gap: v.$space-6;
   width: 100%;
-  background: var(--list-tint, transparent);
-  transition: background v.$transition-slow;
+  background-color: var(--bg-dashboard, transparent);
+  color: var(--text-dashboard, var(--color-text));
+  transition: background-color v.$transition-slow, color v.$transition-slow;
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
 
   @media (min-width: 960px) {
     padding-left: v.$space-6;

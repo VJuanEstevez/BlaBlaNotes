@@ -8,6 +8,14 @@ export const DEFAULT_SETTINGS = {
   lang: 'es-ES',
   silenceMs: 3000,
   darkMode: false,
+  // Voice engine
+  continuousMode: false,
+  smartQuantities: true,
+  // Hands-free activation (experimental, opt-in)
+  wakeWordEnabled: false,
+  wakeWord: 'oye blabla',
+  clapTriggerEnabled: false,
+  clapSensitivity: 0.5,
 };
 
 function read(key, fallback) {

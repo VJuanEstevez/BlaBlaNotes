@@ -26,20 +26,131 @@
   font-weight: 700;
 }
 
+.settings__tag {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 2px v.$space-2;
+  border-radius: v.$radius-full;
+  background: rgba(v.$color-warning, 0.16);
+  color: #8a5a00;
+}
+
+html[data-theme='dark'] .settings__tag {
+  color: v.$color-warning;
+}
+
+.settings__note {
+  font-size: v.$font-size-sm;
+  color: var(--color-text-muted);
+  line-height: 1.45;
+}
+
 .settings__select,
-.settings__range {
+.settings__range,
+.settings__input {
   width: 100%;
 }
 
-.settings__select {
+.settings__select,
+.settings__input {
   padding: v.$space-3;
   border: 1px solid var(--color-border);
   border-radius: v.$radius-sm;
   background: var(--color-bg);
+  color: var(--color-text);
+  font: inherit;
+}
+
+.settings__input:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .settings__range {
   accent-color: v.$color-primary;
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+// ------------------------------------------------------------------
+// Toggle switch — a real checkbox styled as a track + thumb, so keyboard
+// and screen-reader behaviour comes for free.
+// ------------------------------------------------------------------
+
+.settings__switch {
+  display: flex;
+  align-items: flex-start;
+  gap: v.$space-3;
+  cursor: pointer;
+  padding: v.$space-1 0;
+}
+
+.settings__switch-input {
+  @include m.visually-hidden;
+}
+
+.settings__switch-track {
+  position: relative;
+  flex-shrink: 0;
+  width: 42px;
+  height: 24px;
+  margin-top: 2px;
+  border-radius: v.$radius-full;
+  background: var(--color-border);
+  transition: background v.$transition-fast;
+}
+
+.settings__switch-thumb {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 18px;
+  height: 18px;
+  border-radius: v.$radius-full;
+  background: var(--color-surface);
+  box-shadow: v.$shadow-sm;
+  transition: transform v.$transition-fast;
+}
+
+.settings__switch-input:checked + .settings__switch-track {
+  background: v.$color-primary;
+
+  .settings__switch-thumb {
+    transform: translateX(18px);
+  }
+}
+
+.settings__switch-input:focus-visible + .settings__switch-track {
+  outline: 3px solid rgba(v.$color-primary, 0.5);
+  outline-offset: 2px;
+}
+
+.settings__switch-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.settings__switch-title {
+  font-weight: 600;
+  font-size: v.$font-size-sm;
+}
+
+.settings__switch-hint {
+  font-size: v.$font-size-sm;
+  color: var(--color-text-muted);
+  line-height: 1.4;
+
+  em {
+    font-style: normal;
+    font-weight: 600;
+  }
 }
 
 .settings__data-actions {
@@ -71,5 +182,17 @@
     background: rgba(v.$color-error, 0.08);
     border-color: v.$color-error;
     color: v.$color-error;
+  }
+
+  &--primary {
+    background: v.$color-primary;
+    border-color: v.$color-primary;
+    color: #fff;
+
+    &:hover {
+      background: v.$color-primary-dark;
+      border-color: v.$color-primary-dark;
+      color: #fff;
+    }
   }
 }
