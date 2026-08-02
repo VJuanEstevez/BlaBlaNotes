@@ -43,21 +43,42 @@ export class VoiceService {
     this.buffer = '';
     this.lastActivityAt = 0;
     this.restartTimestamps = [];
+    // Bumped on every `_setup()` call so a stray event from an instance we've
+    // already replaced can never reach the handlers below.
+    this.sessionId = 0;
+    // Index (into the current session's `event.results`) already folded into
+    // `buffer`. Some engines redeliver an already-finalized result after a
+    // restart or a `stop()`; without this guard that redelivery gets appended
+    // a second time and the user sees their word duplicated.
+    this.processedFinalIndex = 0;
 
     if (isSpeechSupported) {
       this._setup();
     }
   }
 
+  /** Creates a fresh recognition instance for a new session. Reusing the same
+   *  instance across restarts is a known source of duplicated final results
+   *  in Chrome; a new instance plus the session-id guard rules that out. */
   _setup() {
+    this.sessionId += 1;
+    const sessionId = this.sessionId;
+    this.processedFinalIndex = 0;
+
     this.recognition = new SpeechRecognitionImpl();
     this.recognition.continuous = true;
     this.recognition.interimResults = true;
     this.recognition.lang = this.lang;
 
-    this.recognition.onresult = (event) => this._handleResult(event);
-    this.recognition.onerror = (event) => this._handleError(event);
-    this.recognition.onend = () => this._handleEnd();
+    this.recognition.onresult = (event) => {
+      if (sessionId === this.sessionId) this._handleResult(event);
+    };
+    this.recognition.onerror = (event) => {
+      if (sessionId === this.sessionId) this._handleError(event);
+    };
+    this.recognition.onend = () => {
+      if (sessionId === this.sessionId) this._handleEnd();
+    };
   }
 
   setLang(lang) {
@@ -95,6 +116,9 @@ export class VoiceService {
     this.restartTimestamps = [];
     this.lastActivityAt = Date.now();
 
+    // A fresh instance for this session (see `_setup`'s comment).
+    this._setup();
+
     try {
       this.recognition.start();
       this.isListening = true;
@@ -110,11 +134,20 @@ export class VoiceService {
     this.shouldRestart = false;
     this._clearSilenceTimer();
     this._stopWatchdog();
+
     if (this.recognition && this.isListening) {
+      // `recognition.stop()` is asynchronous: the engine keeps processing
+      // whatever audio it already captured and still fires one more
+      // `onresult` with the trailing final phrase before `onend`. Committing
+      // synchronously here AND letting `_handleEnd` commit again once that
+      // trailing result arrives is exactly what saved the same phrase twice.
+      // `_handleEnd` is the single, authoritative commit now.
       this.recognition.stop();
+    } else {
+      this._commitBuffer();
     }
+
     this.isListening = false;
-    this._commitBuffer();
     this.onStateChange('idle');
   }
 
@@ -125,7 +158,13 @@ export class VoiceService {
     for (let i = event.resultIndex; i < event.results.length; i++) {
       const result = event.results[i];
       if (result.isFinal) {
+        // Some engines redeliver a result index already folded into the
+        // buffer (e.g. right after a `stop()`/restart); skipping it here is
+        // what actually stops the duplicated word, independent of the
+        // double-commit fixed in `stop()`/`_handleEnd`.
+        if (i < this.processedFinalIndex) continue;
         finalChunk += result[0].transcript;
+        this.processedFinalIndex = i + 1;
       } else {
         interim += result[0].transcript;
       }
@@ -259,6 +298,8 @@ export class VoiceService {
     }
 
     try {
+      // Fresh instance for the restarted session (see `_setup`'s comment).
+      this._setup();
       this.recognition.start();
       this.isListening = true;
       this.lastActivityAt = Date.now();
