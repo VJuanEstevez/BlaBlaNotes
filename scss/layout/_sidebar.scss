@@ -185,7 +185,7 @@
   &__footer {
     display: flex;
     flex-direction: column;
-    gap: v.$space-1;
+    gap: v.$space-3;
     margin-top: auto;
     padding-top: v.$space-4;
     border-top: 1px solid rgba(255, 255, 255, 0.08);
@@ -220,6 +220,15 @@
       height: 20px;
       fill: currentColor;
     }
+  }
+
+  &__credit {
+    font-size: v.$font-size-sm;
+    color: v.$color-text-inverse-muted;
+    text-align: center;
+    margin: 0;
+    padding-top: v.$space-2;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
   }
 
   @media (min-width: 960px) {

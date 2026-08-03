@@ -473,7 +473,6 @@ function handleAction(event) {
       break;
 
     case 'share-clipboard':
-    case 'share-whatsapp':
     case 'share-email':
       shareActiveList(
         action.replace('share-', ''),
@@ -624,23 +623,31 @@ listPanelEl.addEventListener('drop', (event) => {
 });
 
 // ------------------------------------------------------------------
-// Dark mode
+// Keyboard input
 // ------------------------------------------------------------------
 
-const darkModeToggle = document.getElementById('dark-mode-toggle');
-const darkModeIcon = darkModeToggle.querySelector('.sidebar__footer-icon');
-const darkModeLabel = darkModeToggle.querySelector('[data-role="dark-mode-label"]');
+const keyboardInputForm = document.getElementById('keyboard-input-form');
+const keyboardInput = document.getElementById('keyboard-input');
+const keyboardToggle = document.getElementById('keyboard-toggle');
 
-function applyTheme(isDark) {
-  document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
-  darkModeToggle.setAttribute('aria-pressed', String(isDark));
-  darkModeIcon.textContent = isDark ? '☀️' : '🌙';
-  darkModeLabel.textContent = isDark ? 'Modo claro' : 'Modo oscuro';
-}
+keyboardToggle.addEventListener('click', () => {
+  const isVisible = !keyboardInputForm.hidden;
+  keyboardInputForm.hidden = isVisible;
+  if (!isVisible) {
+    keyboardInput.focus();
+  }
+});
 
-darkModeToggle.addEventListener('click', () => {
-  updateSettings({ darkMode: !store.getState().settings.darkMode });
-  applyTheme(store.getState().settings.darkMode);
+keyboardInputForm.addEventListener('submit', (event) => {
+  event.preventDefault();
+  const text = keyboardInput.value.trim();
+  if (!text) return;
+
+  const { lists, activeListId } = store.getState();
+  const activeId = activeListId || ensureActiveOrDefaultList();
+  handleAddItems(null, [{ text: capitalize(text) }]);
+  keyboardInput.value = '';
+  keyboardInput.focus();
 });
 
 // ------------------------------------------------------------------
@@ -837,7 +844,6 @@ importInput.addEventListener('change', async () => {
       settings: storage.loadSettings(),
     });
     render();
-    applyTheme(store.getState().settings.darkMode);
     syncSettingsControls();
     closeSettingsModal();
     showToast('Datos importados correctamente', 'success');
@@ -859,7 +865,6 @@ document.getElementById('settings-clear').addEventListener('click', () => {
   editingItemId = null;
   paletteOpenListId = null;
   render();
-  applyTheme(store.getState().settings.darkMode);
   syncSettingsControls();
   closeSettingsModal();
   showToast('Todos los datos han sido borrados');
@@ -939,7 +944,6 @@ export function initApp() {
   }
 
   setContinuousLabel(store.getState().settings.continuousMode);
-  applyTheme(store.getState().settings.darkMode);
   syncSettingsControls();
   initHandsFree();
   render();

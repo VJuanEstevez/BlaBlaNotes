@@ -118,3 +118,26 @@
     animation: pulse-dot 2s ease-in-out infinite;
   }
 }
+
+.voice-control__keyboard-toggle {
+  @include m.button-reset;
+  @include m.focus-ring;
+  font-size: 1.2rem;
+  width: 44px;
+  height: 44px;
+  border-radius: v.$radius-md;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all v.$transition-fast;
+  background: var(--surface-dashboard, transparent);
+  border: 1px solid var(--border-dashboard, var(--color-border));
+
+  &:hover {
+    background: var(--surface-dashboard, var(--color-bg));
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+}

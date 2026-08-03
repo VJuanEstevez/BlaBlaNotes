@@ -1,0 +1,55 @@
+@use '../utils/variables' as v;
+@use '../utils/mixins' as m;
+
+.keyboard-input {
+  display: flex;
+  gap: v.$space-2;
+  width: 100%;
+  align-items: center;
+  margin-bottom: v.$space-3;
+}
+
+.keyboard-input__field {
+  flex: 1;
+  padding: v.$space-2 v.$space-3;
+  border: 1px solid var(--color-border);
+  border-radius: v.$radius-md;
+  background: var(--color-surface);
+  color: var(--color-text);
+  font: inherit;
+  font-size: v.$font-size-sm;
+
+  &::placeholder {
+    color: var(--color-text-muted);
+  }
+
+  &:focus-visible {
+    outline: 2px solid v.$color-primary;
+    outline-offset: 1px;
+  }
+}
+
+.keyboard-input__submit {
+  @include m.button-reset;
+  @include m.focus-ring;
+  width: 36px;
+  height: 36px;
+  border-radius: v.$radius-md;
+  background: v.$color-primary;
+  color: #fff;
+  font-size: 1.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all v.$transition-fast;
+  flex-shrink: 0;
+
+  &:hover {
+    background: v.$color-primary-dark;
+    transform: translateY(-1px);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+}

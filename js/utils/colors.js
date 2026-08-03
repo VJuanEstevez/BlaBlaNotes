@@ -7,6 +7,7 @@ export const COLOR_PALETTE = [
   { name: 'esmeralda', value: '#26c485' },
   { name: 'cielo', value: '#3ec4e0' },
   { name: 'indigo', value: '#5c6bc0' },
+  { name: 'púrpura', value: '#9c27b0' },
 ];
 
 /** Text tones used when a surface needs a readable foreground. */
